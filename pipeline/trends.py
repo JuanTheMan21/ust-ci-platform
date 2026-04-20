@@ -7,7 +7,11 @@ import psycopg2.extras
 from dotenv import load_dotenv
 
 load_dotenv()
-DB_DSN = os.getenv("DB_DSN")
+try:
+    import streamlit as st
+    DB_DSN = st.secrets["database_url"]
+except Exception:
+    DB_DSN = os.getenv("DB_DSN")
 
 
 def _connect():
