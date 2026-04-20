@@ -7,15 +7,14 @@ import psycopg2.extras
 from dotenv import load_dotenv
 
 load_dotenv()
-try:
-    import streamlit as st
-    DB_DSN = st.secrets["database_url"]
-except Exception:
-    DB_DSN = os.getenv("DB_DSN")
-
 
 def _connect():
-    return psycopg2.connect(DB_DSN)
+    try:
+        import streamlit as st
+        dsn = st.secrets["database_url"]
+    except Exception:
+        dsn = os.getenv("DB_DSN")
+    return psycopg2.connect(dsn)
 
 
 def get_competitor_activity(days: int = 7) -> list[dict]:
