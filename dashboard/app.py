@@ -34,7 +34,10 @@ except ImportError:
 # ---------------------------------------------------------------------------
 load_dotenv()
 
-DB_DSN         = os.getenv("DB_DSN")
+try:
+    DB_DSN = st.secrets["database_url"]
+except (KeyError, AttributeError):
+    DB_DSN = os.getenv("DB_DSN")  # fallback for local dev
 AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
 AZURE_API_KEY  = os.getenv("AZURE_API_KEY")
 AZURE_MODEL    = os.getenv("AZURE_MODEL")
@@ -120,7 +123,7 @@ def fetch_signals_cached():
     import psycopg2, os, pandas as pd
     from dotenv import load_dotenv
     load_dotenv()
-    conn = psycopg2.connect(os.getenv("DB_DSN"))
+    conn = psycopg2.connect(DB_DSN)
     try:
         cur = conn.cursor()
         # Try full query with enrichment columns; fall back if migration not run yet
@@ -175,7 +178,7 @@ def fetch_clusters_cached():
     import psycopg2, os, pandas as pd
     from dotenv import load_dotenv
     load_dotenv()
-    conn = psycopg2.connect(os.getenv("DB_DSN"))
+    conn = psycopg2.connect(DB_DSN)
     try:
         cur = conn.cursor()
         cur.execute("""
